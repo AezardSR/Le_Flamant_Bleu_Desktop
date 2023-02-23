@@ -1,0 +1,22 @@
+{
+  "name": "le_flamant_bleu_desktop",
+  "version": "1.0.0",
+  "description": "Le Flamant Bleu desktop !",
+  "main": "index.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AezardSR/Le_Flamant_Bleu_Desktop.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/AezardSR/Le_Flamant_Bleu_Desktop/issues"
+  },
+  "homepage": "https://github.com/AezardSR/Le_Flamant_Bleu_Desktop#readme",
+  "devDependencies": {
+    "electron": "^23.1.1"
+  }
+}
