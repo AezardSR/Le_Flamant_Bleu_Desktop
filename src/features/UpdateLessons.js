@@ -1,62 +1,67 @@
-import { getByTitle } from "@testing-library/react";
-import React, { useEffect, useState } from "react";
-import { Link, useParams } from 'react-router-dom'
-import '../css/AddLesson.css';
+import React, { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
 
-const UpdateLessons = () => {
-
-  const [title, setTitle] = useState([]);
-  const [description, setDescription] = useState([]);
-  const [duration, setDuration] = useState([]);
-
-  const [partsID, setPartsID] = useState('');
-  const [parts, setParts] = useState([]);
-
+const UpdateLesson = () => {
   const { lessonsID } = useParams();
 
+  const [lesson, setLesson] = useState({ name: '', content: '', duration: '', parts_id: '' });
+  const [parts, setParts] = useState([]);
+
   useEffect(() => {
+    fetch(`http://localhost:8000/api/lessons/${lessonsID}`)
+      .then(response => response.json())
+      .then(data => setLesson(data));
+
     fetch('http://localhost:8000/api/parts/')
       .then(response => response.json())
-      .then(data => setParts(data))
-  }, [])
+      .then(data => setParts(data));
+  }, [lessonsID]);
 
-  function updateLesson(e) {
-    fetch('http://localhost:8000/api/lessons/' + lessonsID, { 
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({name: title, content: description, duration: duration, parts_id: partsID})
+  const handleInputChange = (event) => {
+    const { name, value } = event.target;
+    setLesson(prevLesson => ({ ...prevLesson, [name]: value }));
+  };
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    fetch(`http://localhost:8000/api/lessons/${lessonsID}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(lesson)
     })
-        .then(response => response.json())
-        .then(data => console.log(data))
-        e.preventDefault()
-    }
+      .then(response => response.json())
+      .then(data => console.log(data))
+      .catch(error => console.error(error));
+  };
 
-    return (
-      <div>
-        <form className="form-add-lesson">
+  return (
+    <div>
+      <h2>Modifier une leçon</h2>
+      <form onSubmit={handleSubmit}>
+        <div>
+          <label htmlFor="name">Nom :</label>
+          <input type="text" id="name" name="name" value={lesson.name} onChange={handleInputChange} />
+        </div>
+        <div>
+          <label htmlFor="content">Contenu :</label>
+          <textarea id="content" name="content" value={lesson.content} onChange={handleInputChange} />
+        </div>
+        <div>
+          <label htmlFor="duration">Durée :</label>
+          <input type="text" id="duration" name="duration" value={lesson.duration} onChange={handleInputChange} />
+        </div>
+        <div>
+          <label htmlFor="parts_id">Partie :</label>
+          <select id="parts_id" name="parts_id" value={lesson.parts_id} onChange={handleInputChange}>
+            {parts.map(part => (
+              <option key={part.id} value={part.id}>{part.name}</option>
+            ))}
+          </select>
+        </div>
+        <button type="submit">Modifier la leçon</button>
+      </form>
+    </div>
+  );
+};
 
-            <div className='form-add-lesson-add-title'>
-                <input value={title} onChange={(event) => {setTitle(event.target.value)}} className="form-add-lesson-title" placeholder="Insérer titre"></input>
-            </div>
-
-            <div className='form-add-lesson-add-details'>
-                <div className='form-add-lesson-select-categorie'>
-                  <select className="p-5px w-100 h-45px" style={{marginBottom: '20px', fontSize: 'Medium'}} onChange={(event) => {setPartsID(event.target.value)}} value={partsID}>
-                    {parts.map((part) => (
-                      <option key={part.id} value={part.id}>{part.id} : {part.name}</option>
-                    ))}
-                  </select>
-                  <input value={duration} onChange={(event) => {setDuration(event.target.value)}} className="form-add-lesson-duration" placeholder="Temps à passer"></input><label>heure(s)</label>
-                </div>
-            </div>
-
-            <div className='form-add-lesson-add-description'>
-                <textarea value={description} onChange={(event) => {setDescription(event.target.value)}} className="form-add-lesson-description" placeholder="Description du cours"></textarea>
-            </div>
-            <button onClick={updateLesson} type="submit" className="btn btn-form-add-lesson">Changer le cours</button>
-        </form>
-      </div>
-    )
-  }
-  
-export default UpdateLessons
+export default UpdateLesson;
