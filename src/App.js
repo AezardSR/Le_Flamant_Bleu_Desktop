@@ -15,6 +15,7 @@ import Exercice from './pages/Exercice.js';
 import AddLesson from './features/AddLesson.js';
 import UpdateLessons from './features/UpdateLessons.js';
 import AddExercice from './features/AddExercice.js';
+import UpdateExercices from './features/UpdateExercices.js';
 import AddCategorie from './features/AddCategorie.js';
 import DeleteCategorie from './features/DeleteCategorie.js';
 import UpdateCategorie from './features/UpdateCategorie.js';
@@ -80,6 +81,7 @@ function App() {
                 {/* Exercice */}
                 <Route path="/exercices" element={<><MenuPrincipal /><Exercice /></>} />
                 <Route path="/ajouter-exercice" element={<><MenuPrincipal /><AddExercice /></>} />
+                <Route path="/update-exercice/:exercicesID" element={<><MenuPrincipal /><UpdateExercices /></>} />
 
             {/* Fiches d'informations */}
             <Route path="/form-add-user" element={<><MenuPrincipal /><FormAddUser /></>} />
