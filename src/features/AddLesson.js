@@ -8,18 +8,8 @@ const AddLesson = () => {
   const [title, setTitle] = useState([]);
   const [description, setDescription] = useState([]);
   const [duration, setDuration] = useState([]);
-
-  // const [categoryID, setCategoryID] = useState('');
-  // const [categories, setCategories] = useState([]);
-
   const [partsID, setPartsID] = useState('');
   const [parts, setParts] = useState([]);
-
-  // useEffect(() => {
-  //   fetch('http://localhost:8000/api/categories/')
-  //     .then(response => response.json())
-  //     .then(data => setCategories(data))
-  // }, [])
 
   useEffect(() => {
     fetch('http://localhost:8000/api/parts/')
@@ -47,11 +37,6 @@ const AddLesson = () => {
             <div className='form-add-lesson-add-title'>
                 <input value={title} onChange={(event) => {setTitle(event.target.value)}} className="form-add-lesson-title" placeholder="Insérer titre"></input>
             </div>
-
-            {/* <div className='form-add-lesson-add-pdf'>
-                <input type="file" className="form-add-lesson-pdf" placeholder="Veuillez insérer un fichier pdf"></input>
-                <p>*L'insertion de fichier est non-obligatoire, vous pouvez taper votre cours dans la section description</p>
-            </div> */}
 
             <div className='form-add-lesson-add-details'>
                 <div className='form-add-lesson-select-categorie'>
