@@ -12,9 +12,11 @@ useEffect(() => {
 }, [])
 
 function deleteIDPromo(id) {
-    fetch('http://localhost:8000/api/promos/' + id, { method: 'DELETE' })
-    .then(response => response.json())
-    .then(data => console.log(data))
+  if (window.confirm("Êtes-vous sûr de vouloir supprimer cette promo ?")) {
+      fetch('http://localhost:8000/api/promos/' + id, { method: 'DELETE' })
+      .then(response => response.json())
+      .then(data => console.log(data))
+  }
 }
 
   return (
