@@ -14,6 +14,7 @@ import Lesson from './pages/Lesson.js';
 import Exercice from './pages/Exercice.js';
 import AddLesson from './features/AddLesson.js';
 import UpdateLessons from './features/UpdateLessons.js';
+import SeeLessons from './features/SeeLessons.js';
 import AddExercice from './features/AddExercice.js';
 import UpdateExercices from './features/UpdateExercices.js';
 import AddCategorie from './features/AddCategorie.js';
@@ -77,6 +78,7 @@ function App() {
                 <Route path="/cours" element={<><MenuPrincipal /><Lesson /></>} />
                 <Route path="/ajouter-cours" element={<><MenuPrincipal /><AddLesson /></>} />
                 <Route path="/update-lessons/:lessonsID" element={<><MenuPrincipal /><UpdateLessons /></>} />
+                <Route path="/see-lessons/:lessonsID" element={<><MenuPrincipal /><SeeLessons /></>} />
 
                 {/* Exercice */}
                 <Route path="/exercices" element={<><MenuPrincipal /><Exercice /></>} />

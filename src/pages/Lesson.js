@@ -33,14 +33,16 @@ function Lesson() {
             <ul className="listing-categorie-nav">
                 {lessons.map((cours) => (
                   <li key={cours.id}>
-                    <div className="p-10px">
-                      <p>{cours.id} : {cours.name}</p>
-                      <p>{cours.content}</p>
-                      <button className='btn-delete' onClick={() => deleteLesson(cours.id)}>Delete</button>
-                      <button type="submit" className='btn-update'><Link to={"/update-lessons/" + cours.id}>Update</Link></button>
-                      {/* {categorie.categorie}
-                      <span>V</span> */}
-                    </div>
+                      <div className="p-10px">
+                        <Link to={"/see-lessons/" + cours.id}>
+                          <p>{cours.id} : {cours.name}</p>
+                          <p>{cours.content}</p>
+                          <button className='btn-delete' onClick={() => deleteLesson(cours.id)}>Delete</button>
+                          <button type="submit" className='btn-update'><Link to={"/update-lessons/" + cours.id}>Update</Link></button>
+                          {/* {categorie.categorie}
+                          <span>V</span> */}
+                        </Link>
+                      </div>
                       {/* <ul className="listing-categorie-nav">
                         {lessons.map((lesson)  => {
                           if(lesson.categorie_id == categorie.id) {
