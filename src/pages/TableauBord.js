@@ -1,11 +1,9 @@
-import React, { Component, useContext, useState, useEffect } from 'react';
-import { Link } from "react-router-dom";
+import React, {useState, useEffect } from 'react';
+import '../css/styles.css';
 import moment from "moment";
 import 'moment/locale/fr';
-import '../css/TableauBord.css';
-import Calendrier from '../assets/img/calendrier.png'
-import Emploi from '../assets/img/emploi.jpg'
-import News from '../assets/img/news.jpg'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faNewspaper, faPaste } from '@fortawesome/free-solid-svg-icons';
 
 function TableauBord() {
 
@@ -25,42 +23,34 @@ function TableauBord() {
         //DIV Parent de la page
         <div className="page-tableau-bord">
             <div className="tableau-bord">
-                <div className="left-tb">
+                <div className="container-card-tb">
                     <div className="calendar-tb">
-                        <Link to="/calendrier">
+                        <a href="/calendrier">
                             <div className='background-planning'>
                                 <p className="text-date">{currentDate}</p>
                                 <p className="text-month">{currentMonth}</p>
                                 <p>Planning</p>
                             </div>
-                        </Link>
+                        </a>
                     </div>
-                    <div className="news-tb zoom-img">
-                        <Link to="/annonces-emplois">
-                            <div className="article-table-bord">
-                                <img src={Emploi} alt="News 1" className="img-tableau-bord"/>
-                                <p className="text-tb">
-                                    Maecenas vitae magna lacus. Quisque nec est sem. 
-                                    Vivamus tincidunt volutpat enim, bibendum finibus eros faucibus ut. 
-                                    Pellentesque vestibulum nec risus vitae consequat.
-                                </p>
+                    <div className="calendar-tb">
+                        <a href="/nos-actualites">
+                            <div className='background-planning'>
+                                <FontAwesomeIcon className='text-date' icon={faNewspaper} style={{marginBottom:20}}/>
+                                <p>Actualités</p>
                             </div>
-                        </Link>
+                        </a>
                     </div>
+                    <div className="calendar-tb">
+                        <a href="/annonces-emplois">
+                            <div className='background-planning'>
+                                <FontAwesomeIcon className='text-date' icon={faPaste} style={{marginBottom:20}} />
+                                <p>Offres d'emplois</p>
+                            </div>
+                        </a>
+                    </div>
+                    
                 </div>
-                <div className="right-tb zoom-img">
-                    <a href="#">
-                        <div className="article-table-bord">
-                            <img src={News} alt="News 2" className="img-tableau-bord img-right-tb"/>
-                            <p className="text-tb">
-                                Duis posuere ut enim quis tempus. Nam sagittis risus non libero iaculis, 
-                                vitae blandit lectus posuere. Sed consequat tincidunt ultricies. 
-                                Phasellus aliquam efficitur mauris.
-                            </p>
-                        </div>
-                    </a>
-                </div>
-
             </div>
         </div>
     );

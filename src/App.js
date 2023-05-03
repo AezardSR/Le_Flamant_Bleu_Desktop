@@ -1,11 +1,11 @@
-import React, { Component, useContext, useEffect } from 'react';
+import React, { useContext } from 'react';
 import {  BrowserRouter as Router,  Routes,  Route} from "react-router-dom";
 import { Navigate } from "react-router-dom";
-import Connexion from './pages/Connexion.js';
 import TableauBord from './pages/TableauBord.js';
 import MenuPrincipal from './pages/MenuPrincipal.js';
 import MaFormation from './pages/MaFormation.js';
 import Categorie from './pages/Categorie.js';
+import Parts from './pages/Parts.js';
 import Emplois from './pages/Emploi.js';
 import Calendrier from './pages/Planning.js';
 import AddEventPlanning from './features/AddEventPlanning.js';
@@ -13,13 +13,17 @@ import UpdateEventPlanning from './features/UpdateEventPlanning.js';
 import Lesson from './pages/Lesson.js';
 import Exercice from './pages/Exercice.js';
 import AddLesson from './features/AddLesson.js';
-import UpdateLessons from './features/UpdateLessons.js';
-import SeeLessons from './features/SeeLessons.js';
+import GestionLesson from './features/GestionLesson.js';
+import GestionExercice from './features/GestionExercice.js';
 import AddExercice from './features/AddExercice.js';
-import UpdateExercices from './features/UpdateExercices.js';
 import AddCategorie from './features/AddCategorie.js';
+import AddParts from './features/AddParts.js';
 import DeleteCategorie from './features/DeleteCategorie.js';
+// import DeleteParts from './features/DeleteParts.js';
 import UpdateCategorie from './features/UpdateCategorie.js';
+import UpdateParts from './features/UpdateParts.js';
+import UpdateLessons from './features/UpdateLessons.js';
+import UpdateExercices from './features/UpdateExercices.js';
 import JobsAnnouncements from './pages/JobsAnnouncements.js';
 import AddJobsAnnouncements from './features/AddJobsAnnouncements.js';
 import IndexJobsAnnouncements from './pages/IndexJobsAnnouncements.js';
@@ -31,88 +35,94 @@ import ListEmargement from './pages/ListEmargement.js';
 import Admin from './pages/Admin.js';
 import Actualites from './pages/Actualites.js';
 import AddActualites from './features/AddActualite.js';
-import Promos from './pages/Promo.js';
-import UpdatePromos from './features/UpdateEventPromos.js';
-import PromosByID from './features/PromosByID.js';
-import AddPromos from './features/AddPromos.js';
-import './css/App.css';
-import AddActualite from './features/AddActualite.js';
+import ActualitesListing from './pages/ActualitesListing.js';
+import ActualitesID from './pages/ActualitesID.js';
+import UpdateActualites from './features/UpdateActualite.js';
+import GestionJobsAnnoucements from './pages/OffresEmplois.js';
+import UpdateJobsOffers from './features/UpdateJobsOffers.js';
+import JobOffersID from './pages/JobOffersID.js';
 import { ApiContext } from './features/APIToken/ApiContext.js';
 import Login from './features/APIToken/login.js';
-
+import Register from './pages/register.js';
 
 function App() {
-    const {user} = useContext(ApiContext);
-    console.log(user);
+    const {user, userStatus} = useContext(ApiContext); // on importe le contexte de l'API, précisément la variable user
+    // on teste si l'utilisateur est connecté, si oui on affiche la page, sinon on le redirige vers la page de connexion
     const logged = (comp) => {
-      if( user.status == "Token is Invalid" || !user["message"] == "succes" && document.readyState === 'complete'){
-        return <Navigate to="/login" replace={true} />
-      } else {
-        return comp
-      }
+      if( !localStorage.getItem("token") || user.status === "Token is Invalid" || user.status === "Token is Expired" || !userStatus === "connected"){
+       return <Navigate to="/login" replace={true} />
+     } else {
+       return comp
+     }
     }
 
+    // On renvoie le composant app qui est les coeurs de l'application
+    // Ce composant contient toutes les routes de l'application, il est appelé dans
+    // le fichier index.js qui est le point d'entrée de l'application autour du quel on a mis le context de l'API
     return (
     <div className="App">
-      <Router>
-
         <div className='page-tableau-bord'>
           <Routes>
             {/* Dashboard => index */}
-            <Route path='/login' element={<Login/>}></Route>
-            <Route path="/" element={<><MenuPrincipal /><TableauBord /></>} />
-            <Route path="/profile" element={<PageProfilUtilisateur />} />
-            <Route path="/ma-formation" element={<><MenuPrincipal /><MaFormation /></>} />
-            <Route path="/emplois" element={<><MenuPrincipal /><Emplois /></>} />
+            <Route path='/login' element={<Login/>}/>
+            <Route path="/" element={logged(<><MenuPrincipal /><TableauBord /></>)} />
+            <Route path="/profile" element={logged(<PageProfilUtilisateur />)} />
+            <Route path="/ma-formation" element={logged(<><MenuPrincipal /><MaFormation /></>)} />
+            <Route path="/emplois" element={logged(<><MenuPrincipal /><Emplois /></>)} />
+            <Route path="/register" element={logged(<><MenuPrincipal /><Register /></>)} />
 
             {/* Calendrier */}
-            <Route path="/calendrier" element={<><MenuPrincipal /><Calendrier /></>} />
-            <Route path="/add-event-planning" element={<><MenuPrincipal /><AddEventPlanning /></>} />
-            <Route path="/update/:appointmentID" element={<><MenuPrincipal /><UpdateEventPlanning /></>} />
+            <Route path="/calendrier" element={logged(<><MenuPrincipal /><Calendrier /></>)} />
+            <Route path="/add-event-planning" element={logged(<><MenuPrincipal /><AddEventPlanning /></>)} />
+            <Route path="/update/:appointmentID" element={logged(<><MenuPrincipal /><UpdateEventPlanning /></>)} />
 
             <Route path="/categorie" element={<><MenuPrincipal /><Categorie /></>} />
             <Route path="/ajouter-categorie" element={<><MenuPrincipal /><AddCategorie /></>} />
-            <Route path="/supprimer-categorie" element={<><MenuPrincipal /><DeleteCategorie /></>} />
-            <Route path="/modifier-categorie" element={<><MenuPrincipal /><UpdateCategorie /></>} />
+            <Route path="/modifier-categorie/:categoryID" element={<><MenuPrincipal /><UpdateCategorie /></>} />
+
+            <Route path="/parties" element={<><MenuPrincipal /><Parts /></>} />
+            <Route path="/ajouter-parties" element={<><MenuPrincipal /><AddParts /></>} />
+            <Route path="/modifier-parties/:partsID" element={<><MenuPrincipal /><UpdateParts /></>} />
+
                 {/* Cours */}
-                <Route path="/cours" element={<><MenuPrincipal /><Lesson /></>} />
-                <Route path="/ajouter-cours" element={<><MenuPrincipal /><AddLesson /></>} />
-                <Route path="/update-lessons/:lessonsID" element={<><MenuPrincipal /><UpdateLessons /></>} />
-                <Route path="/see-lessons/:lessonsID" element={<><MenuPrincipal /><SeeLessons /></>} />
+                <Route path="/cours" element={logged(<><MenuPrincipal /><Lesson /></>)} />
+                <Route path="/gestion-cours" element={logged(<><MenuPrincipal /><GestionLesson /></>)} />
+                <Route path="/ajouter-cours" element={logged(<><MenuPrincipal /><AddLesson /></>)} />
+                <Route path="/modifier-cours/:lessonsID" element={logged(<><MenuPrincipal /><UpdateLessons /></>)} />
 
                 {/* Exercice */}
-                <Route path="/exercices" element={<><MenuPrincipal /><Exercice /></>} />
-                <Route path="/ajouter-exercice" element={<><MenuPrincipal /><AddExercice /></>} />
-                <Route path="/update-exercice/:exercicesID" element={<><MenuPrincipal /><UpdateExercices /></>} />
+                <Route path="/exercices" element={logged(<><MenuPrincipal /><Exercice /></>)} />
+                <Route path="/gestion-exercices" element={logged(<><MenuPrincipal /><GestionExercice /></>)} />
+                <Route path="/ajouter-exercice" element={logged(<><MenuPrincipal /><AddExercice /></>)} />
+                <Route path="/modifier-exercice/:exercicesID" element={logged(<><MenuPrincipal /><UpdateExercices /></>)} />
 
             {/* Fiches d'informations */}
-            <Route path="/form-add-user" element={<><MenuPrincipal /><FormAddUser /></>} />
-            <Route path="/list-user" element={<><MenuPrincipal /><ListUtilisateur /></>} />
+            <Route path="/form-add-user" element={logged(<><MenuPrincipal /><FormAddUser /></>)} />
+            <Route path="/list-user" element={logged(<><MenuPrincipal /><ListUtilisateur /></>)} />
            
 
             {/* Annonces boulots */}
-            <Route path="/annonces-emplois" element={<><MenuPrincipal /><JobsAnnouncements /></>} />
-            <Route path="/ajouter-annonce-emploi" element={<><MenuPrincipal /><AddJobsAnnouncements /></>} />
-            <Route path="/index-annonce-emploi" element={<><MenuPrincipal /><IndexJobsAnnouncements /></>} />
+            <Route path="/annonces-emplois" element={logged(<><MenuPrincipal /><JobsAnnouncements /></>)} />
+            <Route path="/index-annonce-emploi" element={logged(<><MenuPrincipal /><IndexJobsAnnouncements /></>)} />
+            <Route path="/offres-emplois" element={logged(<><MenuPrincipal /><GestionJobsAnnoucements /></>)} />
+            <Route path="/offres-emplois/:JobOffersID" element={logged(<><MenuPrincipal /><JobOffersID /></>)} />
+            <Route path="/ajouter-annonce-emploi" element={logged(<><MenuPrincipal /><AddJobsAnnouncements /></>)} />
+            <Route path="/modifier-offres-emplois/:jobOffersID" element={logged(<><MenuPrincipal /><UpdateJobsOffers /></>)} />
 
-            <Route path="/admin" element={<><MenuPrincipal /><Admin /></>} />
+            <Route path="/admin" element={logged(<><MenuPrincipal /><Admin /></>)} />
               {/* Emargements */}
-              <Route path="/emargements" element={<><MenuPrincipal /><Emargement /></>} />
-              <Route path="/liste-emargements" element={<><MenuPrincipal /><ListEmargement /></>} />
+              <Route path="/emargements" element={logged(<><MenuPrincipal /><Emargement /></>)} />
+              <Route path="/liste-emargements" element={logged(<><MenuPrincipal /><ListEmargement /></>)} />
 
               {/* Actualités */}
-              <Route path="/actualites" element={<><MenuPrincipal /><Actualites /></>} />
-              <Route path="/ajouter-actualite" element={<><MenuPrincipal /><AddActualites /></>} />
-
-              {/* Promotions */}
-              <Route path="/gestion-promotion" element={<><MenuPrincipal /><Promos /></>} />
-              <Route path="/update-promotion/:promotionID" element={<><MenuPrincipal /><UpdatePromos /></>} />
-              <Route path="/voir-promotion/:promotionID" element={<><MenuPrincipal /><PromosByID /></>} />
-              <Route path="/ajouter-promotion" element={<><MenuPrincipal /><AddPromos /></>} />
+              <Route path="/actualites" element={logged(<><MenuPrincipal /><Actualites /></>)} />
+              <Route path="/nos-actualites" element={logged(<><MenuPrincipal /><ActualitesListing /></>)} />
+              <Route path="/nos-actualites/actualite/:actualitesID" element={logged(<><MenuPrincipal /><ActualitesID /></>)} />
+              <Route path="/ajouter-actualite" element={logged(<><MenuPrincipal /><AddActualites /></>)} />
+              <Route path="/modifier-actualite/:actualitesID" element={logged(<><MenuPrincipal /><UpdateActualites /></>)} />
           </Routes>
         </div>
-      </Router>
-      
+
     </div>
     );  
   }

@@ -1,28 +1,30 @@
 import React from 'react'
 import Calendar from 'react-calendar';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import 'react-calendar/dist/Calendar.css';
-import '../css/Calendar.css';
+import '../css/styles.css';
 import { Link } from 'react-router-dom';
+import { ApiContext } from "../features/APIToken/ApiContext";
 
 function Planning() {
+    const {requestAPI} = useContext(ApiContext);
     const [date, setDate] = useState(new Date());
     const [appointments, setAppointments] = useState([]);
 
     useEffect(() => {
-          fetch('http://localhost:8000/api/appointments/', { method: 'GET' })
+        requestAPI('/appointments', 'GET',null)
           .then(response => response.json())
           .then(data => setAppointments(data))
     }, [])
 
     function deleteID(id) {
-      fetch('http://localhost:8000/api/appointments/' + id, { method: 'DELETE' })
+      requestAPI('/appointments' + id, 'DELETE',null)
         .then(response => response.json())
         .then(data => console.log(data))
     }
 
     return (
-      <div>
+      <div className='responsive-calendar'>
             <div className='calendar-container'>
                 <Calendar onChange={setDate} value={date}  />
 
@@ -36,8 +38,8 @@ function Planning() {
                         <p className='planning-date'>{appointment.dateDetails}</p>
                         <p className="date-select-formation planning-title">{appointment.titleDetails}</p>
                         <p className="date-select-formation planning-details">{appointment.descriptionDetails}</p>
-                        <button className='btn-delete' onClick={() => deleteID(appointment.id)}>Delete</button>
-                        <button type="submit" className='btn-update'><Link to={"/update/" + appointment.id}>Update</Link></button>
+                        <button className='btn-delete' onClick={() => deleteID(appointment.id)}>Effacer</button>
+                        <button type="submit" className='btn-update'><Link to={"/update/" + appointment.id}>Modifier</Link></button>
                     </div>
                 ))}
             </div>

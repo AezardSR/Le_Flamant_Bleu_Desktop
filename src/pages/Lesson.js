@@ -1,70 +1,66 @@
 import React, { useEffect, useState } from "react";
-import { Link } from 'react-router-dom';
-import '../css/Lesson.css';
+import '../css/styles.css';
+import Module from '../component/Module';
+import Categorie from "../component/Categories";
+import Part from "../component/Part";
+import CardLesson from "../component/CardLesson";
 
 function Lesson() {
 
-  const [categories, setCategories] = useState([]);
-  const [lessons, setLessons] = useState([]);
+  const [showModule, setShowModule] = useState(true);
+  const [selectedModuleId, setSelectedModuleId] = useState(null);
 
-  useEffect(() => {
-    Promise.all([
-      fetch('http://localhost:8000/api/categories'),
-      fetch('http://localhost:8000/api/lessons'),
-    ])
-      .then(([resCategories, resLessons]) =>
-        Promise.all([resCategories.json(), resLessons.json()])  
-      )
-      .then(([dataCategories, dataLessons]) => {
-        setCategories(dataCategories);
-        setLessons(dataLessons);
-      })
-  }, [])
+  const [showCategorie, setShowCategorie] = useState(true)
+  const [selectedCategorieId, setSelectedCategorieId] = useState(null)
 
-  function deleteLesson(id) {
-    fetch('http://localhost:8000/api/lessons/' + id, { method: 'DELETE' })
-      .then(response => response.json())
-      .then(data => console.log(data))
+  const [showPart, setShowPart] = useState(true);
+  const [selectedPartId, setSelectedPartId] = useState(null);
+
+
+  const handleToggleModule = (moduleId) => {
+    setShowModule((prev) => !prev);
+    setSelectedModuleId(moduleId);
+    // console.log("module id: " + moduleId)
+  };
+
+  const handleToggleCategorie = (categorieId) =>{
+    setShowCategorie((prev) => !prev);
+    setSelectedCategorieId(categorieId)
   }
 
+  const handleTogglePart = (partId) => {
+    setShowPart((prev) => !prev);
+    setSelectedPartId(partId)
+  }
+
+  const handleReturnToPart = () => {
+    setShowPart(true);
+  };
+
+  const handleReturnToCategorie = () =>{
+    setShowCategorie(true)
+  }
+  
+  const handleReturnToModule = () => {
+    setShowModule(true)
+  }
   return (
     <div>
-        <div className="listing-lesson">
-            <ul className="listing-categorie-nav">
-                {lessons.map((cours) => (
-                  <li key={cours.id}>
-                      <div className="p-10px">
-                        <Link to={"/see-lessons/" + cours.id}>
-                          <p>{cours.id} : {cours.name}</p>
-                          <p>{cours.content}</p>
-                          <button className='btn-delete' onClick={() => deleteLesson(cours.id)}>Delete</button>
-                          <button type="submit" className='btn-update'><Link to={"/update-lessons/" + cours.id}>Update</Link></button>
-                          {/* {categorie.categorie}
-                          <span>V</span> */}
-                        </Link>
-                      </div>
-                      {/* <ul className="listing-categorie-nav">
-                        {lessons.map((lesson)  => {
-                          if(lesson.categorie_id == categorie.id) {
-                            return (
-                              <li key={lesson.id}>
-                                <div className="flex-between p-10px align-center">
-                                  <a href="/" target="_blank">
-                                    <p>{lesson.name}</p>
-                                    <p>{lesson.content}</p>
-                                  </a>
-                                </div>
-                              </li>
-                            );
-                          }
-                        })}
-                      </ul> */}
-                  </li>
-                ))}
-            </ul>
-        </div>
-
-       <Link to="/ajouter-cours"><button className="link-lesson-add mar-bottom-10px">Ajouter un cours</button></Link>
+      {
+        showModule ? (
+          <Module onToggle={handleToggleModule}/>
+        ) : ( 
+          showCategorie ? (
+            <Categorie moduleId={selectedModuleId} onToggle={handleToggleCategorie} returnToModule={handleReturnToModule} />
+          ) : (
+            showPart ? (
+              <Part  categorieId={selectedCategorieId} onToggle={handleTogglePart} returnToCategorie={handleReturnToCategorie}  />
+            ) : (
+              <CardLesson partId={selectedPartId} returnToPart={handleReturnToPart}/>
+            )
+          )
+        )
+      }
     </div>
   )
 }

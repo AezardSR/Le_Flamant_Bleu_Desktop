@@ -1,30 +1,30 @@
-import { getByTitle } from "@testing-library/react";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { Link } from 'react-router-dom'
-import '../css/AddLesson.css';
+import '../css/styles.css';
+import { ApiContext } from "../features/APIToken/ApiContext";
 
 const AddLesson = () => {
 
+  const {requestAPI} = useContext(ApiContext);
+
+  //Définir les constantes pour l'ajout d'une Leçon
   const [title, setTitle] = useState([]);
   const [description, setDescription] = useState([]);
   const [duration, setDuration] = useState([]);
-  const [partsID, setPartsID] = useState('');
-  const [parts, setParts] = useState([]);
+  const [categoryID, setCategoryID] = useState('');
+  const [categories, setCategories] = useState([]);
 
+  //On récupère les parties existantes dans la BDD
   useEffect(() => {
-    fetch('http://localhost:8000/api/parts/')
+    requestAPI('/parts', 'GET',null)
       .then(response => response.json())
-      .then(data => setParts(data))
+      .then(data => setCategories(data))
   }, [])
 
+  //Création de la constante contenant l'évènement de l'ajout
   const handleSubmit = (event) => {
-    const requestOptions = {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({name: title, content: description, duration: duration, parts_id: partsID})
-    };
-
-    fetch('http://localhost:8000/api/lessons', requestOptions)
+    //Action POST avec l'url, la méthode et le body contenant les données de la tables classes
+    requestAPI('/lessons', 'POST', {name: title, content: description, duration: duration, parts_id: categoryID})
         .then(response => response.json())
         .then(data => console.log(data))
         event.preventDefault();
@@ -32,28 +32,36 @@ const AddLesson = () => {
 
     return (
       <div>
-        <form className="form-add-lesson">
+        <h1 className="mar-vertical-10px mar-left-10px">Ajouter une leçon</h1>
+        <form className="flex align-center justify-center form-add-element">
+          <div className="flex-column w-500px mar-left-10px">
 
-            <div className='form-add-lesson-add-title'>
-                <input value={title} onChange={(event) => {setTitle(event.target.value)}} className="form-add-lesson-title" placeholder="Insérer titre"></input>
-            </div>
+              <div className="mar-vertical-10px">
+                {/* Ajout du titre de la leçon */}
+                <label>Titre de la leçon</label>
+                <input value={title} onChange={(event) => {setTitle(event.target.value)}}></input>
+              </div>
 
-            <div className='form-add-lesson-add-details'>
-                <div className='form-add-lesson-select-categorie'>
-                  <select className="p-5px w-100 h-45px" style={{marginBottom: '20px', fontSize: 'Medium'}} onChange={(event) => {setPartsID(event.target.value)}} value={partsID}>
-                    {parts.map((part) => (
-                      <option key={part.id} value={part.id}>{part.id} : {part.name}</option>
-                    ))}
-                  </select>
-                  <input value={duration} onChange={(event) => {setDuration(event.target.value)}} className="form-add-lesson-duration" placeholder="Temps à passer"></input><label>heure(s)</label>
-                </div>
-            </div>
+              <div className="mar-vertical-10px">
+                {/* Ajout de la durée de la leçon en heures */}
+                <label>Durée de la leçon (en heures)</label>
+                <input value={duration} onChange={(event) => {setDuration(event.target.value)}}></input>
+              </div>
+          
+              <div className="mar-vertical-10px">
+                {/* Ajout de la partie de la leçon */}
+                <label>Partie de la leçon</label>
+                <select className="p-5px w-100 h-45px" style={{marginBottom: '20px', fontSize: 'Medium'}} onChange={(event) => {setCategoryID(event.target.value)}} value={categoryID}>
+                  {categories.map((categorie) => (
+                    <option key={categorie.id} value={categorie.id}>{categorie.id} : {categorie.name}</option>
+                  ))}
+                </select>
+              </div>
 
-            <div className='form-add-lesson-add-description'>
-                <textarea value={description} onChange={(event) => {setDescription(event.target.value)}} className="form-add-lesson-description" placeholder="Description du cours"></textarea>
-                <Link to="/cours"><button onClick={handleSubmit} type="submit" className="btn btn-form-add-lesson">Valider le cours</button></Link>
-            </div>
-
+              <label>Cours :</label>
+              <textarea value={description} onChange={(event) => {setDescription(event.target.value)}} className="form-add-lesson-description" placeholder="Description du cours"></textarea>
+              <Link to="/cours"><button onClick={handleSubmit} type="submit" className="w-max-content mar-left-auto link-lesson-add mar-vertical-10px pointer">Valider le cours</button></Link>
+          </div>
         </form>
       </div>
     )

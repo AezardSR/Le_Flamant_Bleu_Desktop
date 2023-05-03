@@ -1,68 +1,66 @@
-import React, { useEffect, useState } from "react";
-import { Link } from 'react-router-dom';
-import '../css/Lesson.css';
+import React, { useState } from "react";
+import '../css/styles.css';
+import Module from '../component/Module';
+import Categorie from "../component/Categories";
+import Part from "../component/Part";
+import CardExercice from "../component/CardExercice";
 
 function Exercice() {
 
-  const [categories, setCategories] = useState([]);
-  const [exercices, setExercices] = useState([]);
+  const [showModule, setShowModule] = useState(true);
+  const [selectedModuleId, setSelectedModuleId] = useState(null);
 
-  useEffect(() => {
-    Promise.all([
-      fetch('http://localhost:8000/api/categories'),
-      fetch('http://localhost:8000/api/exercices'),
-    ])
-      .then(([resCategories, resExercices]) =>
-        Promise.all([resCategories.json(), resExercices.json()])  
-      )
-      .then(([dataCategories, dataExercices]) => {
-        setCategories(dataCategories);
-        setExercices(dataExercices);
-      })
-  }, [])
+  const [showCategorie, setShowCategorie] = useState(true)
+  const [selectedCategorieId, setSelectedCategorieId] = useState(null)
 
-  function deleteExercice(id) {
-    fetch('http://localhost:8000/api/exercices/' + id, { method: 'DELETE' })
-      .then(response => response.json())
-      .then(data => console.log(data))
+  const [showPart, setShowPart] = useState(true);
+  const [selectedPartId, setSelectedPartId] = useState(null)
+
+  const handleToggleModule = (moduleId) => {
+    setShowModule((prev) => !prev);
+    setSelectedModuleId(moduleId);
+    // console.log("module id: " + moduleId)
+  };
+
+  const handleToggleCategorie = (categorieId) =>{
+    setShowCategorie((prev) => !prev);
+    setSelectedCategorieId(categorieId)
   }
 
+  const handleTogglePart = (partId) => {
+    setShowPart((prev) => !prev);
+    setSelectedPartId(partId)
+  }
+
+  const handleReturnToPart = () => {
+    setShowPart(true);
+  };
+
+  const handleReturnToCategorie = () =>{
+    setShowCategorie(true)
+  }
+  
+  const handleReturnToModule = () => {
+    setShowModule(true)
+  }
   return (
     <div>
-        <div className="listing-lesson">
-            <ul className="listing-categorie-nav">
-                {exercices.map((exercice) => (
-                  <li key={exercice.id}>
-                    <div className="p-10px">
-                      <p>{exercice.id} : {exercice.name}</p>
-                      <p>{exercice.content}</p>
-                      <button className='btn-delete' onClick={() => deleteExercice(exercice.id)}>Delete</button>
-                      <button type="submit" className='btn-update'><Link to={"/update-exercice/" + exercice.id}>Update</Link></button>
-                      {/* {categorie.categorie}
-                      <span>V</span> */}
-                    </div>
-                      {/* <ul className="listing-categorie-nav">
-                        {lessons.map((lesson)  => {
-                          if(lesson.categorie_id == categorie.id) {
-                            return (
-                              <li key={lesson.id}>
-                                <div className="flex-between p-10px align-center">
-                                  <a href="/" target="_blank">
-                                    <p>{lesson.name}</p>
-                                    <p>{lesson.content}</p>
-                                  </a>
-                                </div>
-                              </li>
-                            );
-                          }
-                        })}
-                      </ul> */}
-                  </li>
-                ))}
-            </ul>
-        </div>
+      {
+        showModule ? (
+          <Module onToggle={handleToggleModule}/>
+        ) : ( 
+          showCategorie ? (
+            <Categorie moduleId={selectedModuleId} onToggle={handleToggleCategorie} returnToModule={handleReturnToModule} />
+          ) : (
+            showPart ? (
+              <Part  categorieId={selectedCategorieId} onToggle={handleTogglePart} returnToCategorie={handleReturnToCategorie} />
+            ) : (
+              <CardExercice partId={selectedPartId} returnToPart={handleReturnToPart} />
+            )
+          )
+        )
+      }
 
-       <Link to="/ajouter-exercice"><button className="link-lesson-add mar-bottom-10px">Ajouter un exercice</button></Link>
     </div>
   )
 }
